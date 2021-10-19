@@ -1,0 +1,863 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n# Get_movies\n\nThis notebook to search for and output movies in csv format from the [MovieLens dataset](https://grouplens.org/datasets/movielens/)",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:33+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h1>Get_movies</h1>\n<p>This notebook to search for and output movies in csv format from the <a href=\"https://grouplens.org/datasets/movielens/\">MovieLens dataset</a></p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584771_810039881",
+      "id": "paragraph_1630693344268_1149424389",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:27065",
+      "dateFinished": "2021-09-17T12:24:34+0000",
+      "dateStarted": "2021-09-17T12:24:34+0000"
+    },
+    {
+      "text": "%md\n#### Downloading and preparing a data set\nThe left column is used for working on local machine, the right column is used for working on cluster (default, on local machine).",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:34+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Downloading and preparing a data set</h4>\n<p>The left column is used for working on local machine, the right column is used for working on cluster (default, on local machine).</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584772_94168899",
+      "id": "paragraph_1630747260667_1633154086",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27066",
+      "dateFinished": "2021-09-17T12:24:34+0000",
+      "dateStarted": "2021-09-17T12:24:34+0000"
+    },
+    {
+      "text": "%sh\nrm -f -r /tmp/data/ /tmp/output/\nmkdir /tmp/data/\necho 'Downloading data...'\nwget -O /tmp/data/movies.zip -q https://files.grouplens.org/datasets/movielens/ml-latest-small.zip\nunzip -q /tmp/data/movies.zip ml-latest-small/movies.csv ml-latest-small/ratings.csv -d /tmp/data/\nmv /tmp/data/ml-latest-small/movies.csv /tmp/data/ \nmv /tmp/data/ml-latest-small/ratings.csv /tmp/data/\nrm -r /tmp/data/movies.zip /tmp/data/ml-latest-small\nif [ -f \"/tmp/data/movies.csv\" ]\nthen\n    echo 'Successfully uploaded'\nelse\n    echo 'Error. Data not uploaded'\nfi",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:34+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Downloading data...\nSuccessfully uploaded\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584772_661013836",
+      "id": "paragraph_1630690893484_1916262340",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "dateStarted": "2021-09-17T12:24:34+0000",
+      "dateFinished": "2021-09-17T12:24:34+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27067"
+    },
+    {
+      "text": "%sh\nhdfs dfs -rm -f -r /tmp/data/ /tmp/output/\nhdfs dfs -mkdir /tmp/data/\necho 'Downloading data...'\nwget -O /tmp/movies.zip -q https://files.grouplens.org/datasets/movielens/ml-latest-small.zip\nunzip -q /tmp/movies.zip ml-latest-small/movies.csv ml-latest-small/ratings.csv -d /tmp/\nhdfs dfs -put /tmp/ml-latest-small/movies.csv /tmp/data/\nhdfs dfs -put /tmp/ml-latest-small/ratings.csv /tmp/data/\nrm -d -r /tmp/movies.zip /tmp/ml-latest-small\nhdfs dfs -test -f \"/tmp/data/movies.csv\"\nif [ $? -eq 0 ] \nthen\n    echo 'Successfully uploaded'\nelse\n    echo 'Error. Data not uploaded'\nfi",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:34+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584772_836696036",
+      "id": "paragraph_1630690973901_1797323801",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27068"
+    },
+    {
+      "text": "%md\n#### Definning the paths to input, output files",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:35+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Definning the paths to input, output files</h4>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584772_1011495593",
+      "id": "paragraph_1630753819807_1744055474",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "dateStarted": "2021-09-17T12:24:35+0000",
+      "dateFinished": "2021-09-17T12:24:35+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27069"
+    },
+    {
+      "text": "%pyspark\nPATH_TO_MOVIES_FILE = 'file:///tmp/data/movies.csv'\nPATH_TO_RATINGS_FILE = 'file:///tmp/data/ratings.csv'\nPATH_TO_OUTPUT_DIR = 'file:///tmp/output/'",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:35+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584773_1033636777",
+      "id": "paragraph_1630754006526_598826001",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "dateStarted": "2021-09-17T12:24:35+0000",
+      "dateFinished": "2021-09-17T12:24:35+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27070"
+    },
+    {
+      "text": "%pyspark\nPATH_TO_MOVIES_FILE = 'hdfs:///tmp/data/movies.csv'\nPATH_TO_RATINGS_FILE = 'hdfs:///tmp/data/ratings.csv'\nPATH_TO_OUTPUT_DIR = 'hdfs:///tmp/output/'",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:35+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584773_1946375932",
+      "id": "paragraph_1630754011032_229094274",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27071"
+    },
+    {
+      "text": "%md\n#### Declaring variables to search for needed movies",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:35+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631880697220_1476223121",
+      "id": "paragraph_1631880697220_1476223121",
+      "dateCreated": "2021-09-17T12:11:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27072",
+      "dateFinished": "2021-09-17T12:24:35+0000",
+      "dateStarted": "2021-09-17T12:24:35+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Declaring variables to search for needed movies</h4>\n\n</div>"
+          }
+        ]
+      }
+    },
+    {
+      "text": "%pyspark\nNUMBER = 4\nREGEXP = 'Love'\nYEAR_FROM = 1990\nYEAR_TO = 2010\nGENRES = 'Action|Crime|Animation'",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:35+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 4,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584773_605022119",
+      "id": "paragraph_1630687959382_1061556384",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "dateStarted": "2021-09-17T12:24:35+0000",
+      "dateFinished": "2021-09-17T12:24:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27073"
+    },
+    {
+      "text": "%md\n<style> p {font-size: 9pt;} </style>\n<p> NUMBER     -   the number movies to output<br>\nREGEXP     -   regular expression for searching by movie name<br>\nYEAR_FROM  -   sets the year for starting the search<br>\nYEAR_TO    -   sets the year for finishing the search<br>\nGENRES     -   sets the genre(s) to search",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:36+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 8,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 95,
+              "optionOpen": false
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<style> p {font-size: 9pt;} </style>\n<p> NUMBER     -   the number movies to output<br>\nREGEXP     -   regular expression for searching by movie name<br>\nYEAR_FROM  -   sets the year for starting the search<br>\nYEAR_TO    -   sets the year for finishing the search<br>\nGENRES     -   sets the genre(s) to search\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584773_1958205512",
+      "id": "paragraph_1630764837009_1099086714",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "dateStarted": "2021-09-17T12:24:36+0000",
+      "dateFinished": "2021-09-17T12:24:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27074"
+    },
+    {
+      "text": "%md\n#### Loading data from csv files into temporary tables",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:36+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Loading data from csv files into temporary tables</h4>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584773_1996726071",
+      "id": "paragraph_1630750339696_1748687465",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "dateStarted": "2021-09-17T12:24:36+0000",
+      "dateFinished": "2021-09-17T12:24:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27075"
+    },
+    {
+      "text": "%pyspark\nraw_movies_df = spark.read.format('csv').options(header=True, inferSchema=True, path=PATH_TO_MOVIES_FILE).load().createOrReplaceTempView('movies')\nraw_ratings_df = spark.read.format('csv').options(header=True, inferSchema=True, path=PATH_TO_RATINGS_FILE).load().createOrReplaceTempView('ratings')",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:36+0000",
+      "progress": 100,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://get-movies-cluster-m.us-central1-c.c.esoteric-cider-322712.internal:35705/jobs/job?id=609",
+              "$$hashKey": "object:31416"
+            },
+            {
+              "jobUrl": "http://get-movies-cluster-m.us-central1-c.c.esoteric-cider-322712.internal:35705/jobs/job?id=610",
+              "$$hashKey": "object:31417"
+            },
+            {
+              "jobUrl": "http://get-movies-cluster-m.us-central1-c.c.esoteric-cider-322712.internal:35705/jobs/job?id=611",
+              "$$hashKey": "object:31418"
+            },
+            {
+              "jobUrl": "http://get-movies-cluster-m.us-central1-c.c.esoteric-cider-322712.internal:35705/jobs/job?id=612",
+              "$$hashKey": "object:31419"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584774_1079800966",
+      "id": "paragraph_1630690690418_909201232",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "dateStarted": "2021-09-17T12:24:36+0000",
+      "dateFinished": "2021-09-17T12:24:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27076"
+    },
+    {
+      "text": "%md\n#### Main sql code",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:37+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Main sql code</h4>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584774_426049485",
+      "id": "paragraph_1630751285207_426346932",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27077",
+      "dateFinished": "2021-09-17T12:24:37+0000",
+      "dateStarted": "2021-09-17T12:24:37+0000"
+    },
+    {
+      "text": "%pyspark\nmovies_result = spark.sql('''\nwith cte_regexp as (\n    select '(.+)[ ]+[(](\\\\\\d{{4}})[[^a-zA-Z]*]' as regexp\n),\ncte_needed_genres as (\n    select explode(split('{GENRES}', '[|]')) as genre\n),\ncte_splited_movies as (\n    select m.movieId as movie_id,\n           regexp_extract(m.title, r.regexp, 1) as title,\n           regexp_extract(m.title, r.regexp, 2) as year,\n           explode(split(genres, '[|]')) as genre\n    from cte_regexp r\n    cross join movies m\n),\ncte_filtered_movies as (\n    select movie_id,\n           m.genre,\n           title,\n           year\n    from cte_splited_movies m\n    join cte_needed_genres g on m.genre = g.genre\n    where m.year between {YEAR_FROM} and {YEAR_TO}\n        and m.title like '%{REGEXP}%'\n),\ncte_ratings as (\n    select movieId as movie_id,\n           round(avg(rating), 1) as rating\n    from ratings\n    where movieId in (select movie_id from cte_filtered_movies)\n    group by movie_id\n),\ncte_joined_movies_and_ratings as (\n    select m.genre,\n           m.title,\n           m.year,\n           r.rating\n    from cte_filtered_movies m\n    left join cte_ratings r on m.movie_id = r.movie_id\n),\ncte_truncated_result as (\n    select *,\n           row_number() over(partition by genre order by rating desc, year desc, title) as row_num\n    from cte_joined_movies_and_ratings\n)\nselect genre,\n       title,\n       year,\n       rating\nfrom cte_truncated_result\nwhere row_num <= IF('{NUMBER}' = 'None', (SELECT COUNT(movie_id) FROM cte_splited_movies), '{NUMBER}')\norder by genre, rating desc, year desc, title\n'''.format(NUMBER=NUMBER, GENRES=GENRES, YEAR_FROM=YEAR_FROM, YEAR_TO=YEAR_TO, REGEXP=REGEXP))",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:37+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584774_33222213",
+      "id": "paragraph_1630688875287_1873798903",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "dateStarted": "2021-09-17T12:24:37+0000",
+      "dateFinished": "2021-09-17T12:24:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27078"
+    },
+    {
+      "text": "%md\n#### Saving the result as a scv file",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:38+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Saving the result as a scv file</h4>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584774_1320876761",
+      "id": "paragraph_1630753181197_556928680",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27087",
+      "dateFinished": "2021-09-17T12:24:38+0000",
+      "dateStarted": "2021-09-17T12:24:38+0000"
+    },
+    {
+      "text": "%pyspark\nmovies_result.write.format('csv').options(path=PATH_TO_OUTPUT_DIR, sep=';', mode='overwrite', nullValue='Null', emptyValue='Null').save()",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:38+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://get-movies-cluster-m.us-central1-c.c.esoteric-cider-322712.internal:35705/jobs/job?id=616",
+              "$$hashKey": "object:31571"
+            },
+            {
+              "jobUrl": "http://get-movies-cluster-m.us-central1-c.c.esoteric-cider-322712.internal:35705/jobs/job?id=618",
+              "$$hashKey": "object:31572"
+            },
+            {
+              "jobUrl": "http://get-movies-cluster-m.us-central1-c.c.esoteric-cider-322712.internal:35705/jobs/job?id=619",
+              "$$hashKey": "object:31573"
+            },
+            {
+              "jobUrl": "http://get-movies-cluster-m.us-central1-c.c.esoteric-cider-322712.internal:35705/jobs/job?id=620",
+              "$$hashKey": "object:31574"
+            },
+            {
+              "jobUrl": "http://get-movies-cluster-m.us-central1-c.c.esoteric-cider-322712.internal:35705/jobs/job?id=621",
+              "$$hashKey": "object:31575"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584774_834318813",
+      "id": "paragraph_1630689009114_1389768789",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27088",
+      "dateFinished": "2021-09-17T12:24:39+0000",
+      "dateStarted": "2021-09-17T12:24:38+0000"
+    },
+    {
+      "text": "%md\n#### Printing the result from saved files",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:39+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Printing the result from saved files</h4>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584774_49896479",
+      "id": "paragraph_1630757946455_1799652517",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27089",
+      "dateFinished": "2021-09-17T12:24:39+0000",
+      "dateStarted": "2021-09-17T12:24:39+0000"
+    },
+    {
+      "text": "%sh\ncat /tmp/output/*",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:39+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Action;Love Exposure (Ai No Mukidashi);2008;5.0\nAction;Love and a .45;1994;4.0\nAction;I Love Trouble;1994;2.7\nAction;From Paris with Love;2010;2.5\nAnimation;My Love;2006;5.0\nAnimation;Tenchi Muyô! In Love;1996;5.0\nCrime;Love and a .45;1994;4.0\nCrime;Lovely Bones, The;2009;3.2\nCrime;I Love You to Death;1990;2.7\nCrime;From Paris with Love;2010;2.5\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584774_169567998",
+      "id": "paragraph_1630701015463_52780918",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27090",
+      "dateFinished": "2021-09-17T12:24:39+0000",
+      "dateStarted": "2021-09-17T12:24:39+0000"
+    },
+    {
+      "text": "%sh\nhdfs dfs -cat /tmp/output/*",
+      "user": "anonymous",
+      "dateUpdated": "2021-09-17T12:24:39+0000",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1631786584774_1195367197",
+      "id": "paragraph_1630724766129_1803139020",
+      "dateCreated": "2021-09-16T10:03:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:27091"
+    }
+  ],
+  "name": "get_movies-sql",
+  "id": "2GGY61FMM",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.9.1-SNAPSHOT",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {
+    "isRunning": false
+  },
+  "path": "/get_movies-sql"
+}

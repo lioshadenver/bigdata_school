@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS movies;
+
+CREATE TABLE movies (
+    row_id INT NOT NULL AUTO_INCREMENT,
+    movie_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    year INT DEFAULT NULL,
+    genre VARCHAR(255) DEFAULT NULL,
+    rating DECIMAL(2,1) DEFAULT NULL,
+    PRIMARY KEY(row_id)
+);
